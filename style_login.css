@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+}
+
+.container {
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #FFFFFF; /* White */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+.container h2 {
+  text-align: center;
+  color: #228B22; /* Dark green */
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  position: relative;
+  display: block;
+  margin-bottom: 5px;
+  color: #228B22; /* Dark green */
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #228B22; /* Dark green */
+  border-radius: 5px;
+}
+.input-group .label .input #eye-icon{
+  position: absolute; /* Position the eye icon */
+  top: 50%; /* Vertically center the eye icon */
+  right: 10px; /* Place the eye icon 10px from the right side */
+  transform: translateY(-50%); /* Adjust for vertical centering */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  color: #FFFFFF; /* White */
+  background-color: #228B22; /* Dark green */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background-color: #3CB371; /* Medium sea green */
+}
+
+.error {
+  color: #FF0000; /* Red */
+  margin-bottom: 20px;
+  text-align: center;
+}

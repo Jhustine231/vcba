@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Alarm Bell</title>
+
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css">
+   <link rel="stylesheet" href="css/style.css">
+   <link href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.css" rel="stylesheet">
+
+   <style>
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-size: 20px;
+            margin-top: 50px;
+        }
+
+        .alarm-setup {
+            margin-bottom: 100px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .alarm-list {
+            margin-top: 100px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .alarm-list li {
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alarm-list button {
+            margin-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+   <section class="flex">
+      <div class="logo">VCBA</div>
+
+      <div class="icons"> 
+         <div id="menu-btn" class="fas fa-bars"></div>
+         <div id="user-btn" class="fas fa-user"></div>
+         <div id="toggle-btn" class="fas fa-sun"></div>
+      </div>
+
+      <div class="profile">
+         <img src="images/pic-7.jpg" class="image" alt="">
+         <?php
+            $sql = "SELECT Username FROM `admin`";
+            $result = mysqli_query($conn, $sql);
+            if ($row = mysqli_fetch_assoc($result)) {
+         ?>
+         <h3 class="name"><?php echo htmlspecialchars($row["Username"]); ?></h3>
+         <p class="role">Admin</p>
+         <a href="update_admin.php" class="btn">Update profile</a>
+         <div class="flex-btn">
+            <a href="index.html" class="option-btn">logout</a>
+         </div>
+         <?php
+            } else {
+               echo "<h3 class='name'>No user found</h3>";
+            }
+         ?>
+      </div>
+   </section>
+</header>   
+
+<div class="side-bar">
+   <div id="close-btn">
+      <i class="fas fa-times"></i>
+   </div>
+
+   <div class="profile">
+      <img src="images/pic-7.jpg" class="image" alt="">
+      <?php
+            $sql = "SELECT Username FROM `admin`";
+            $result = mysqli_query($conn, $sql);
+            if ($row = mysqli_fetch_assoc($result)) {
+         ?>
+      <h3 class="name"><?php echo htmlspecialchars($row["Username"]); ?></h3>
+      <p class="role">Admin</p>
+      <a href="profile_admin.php" class="btn">view profile</a>
+      <?php
+            } else {
+               echo "<h3 class='name'>No user found</h3>";
+            }
+         ?>
+   </div>
+
+   <nav class="navbar">
+      <a href="home_admin.php" style="text-decoration: none;"><i class="fas fa-home"></i><span>Teacher's Schedule</span></a>
+      <a href="home_admin2.php" style="text-decoration: none;"><i class="fas fa-home"></i><span>Student's Schedule</span></a>
+      <a href="event_admin.php" style="text-decoration: none;"><i class="fas fa-question"></i><span>Event</span></a>
+      <a href="alarm_admin.php" style="text-decoration: none;"><i class="fas fa-bell"></i><span>Alarm Bell</span></a>
+   </nav>
+</div>
+
+<div class="container">
+    <h1>Teacher Schedule</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Time In</th>
+                <th>Time Out</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+            $sql = "SELECT time_in, time_out FROM `teach_sched`";
+            $result = mysqli_query($conn, $sql);
+            $schedules = [];
+            if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $schedules[] = $row;
+        ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row["time_in"]); ?></td>
+                <td><?php echo htmlspecialchars($row["time_out"]); ?></td>
+            </tr>
+        <?php
+                }
+            } else {
+                echo "<tr><td colspan='2'>No records found</td></tr>";
+            }
+        ?>
+        </tbody>
+    </table>
+</div>
+
+<div class="container">
+    <h1>Time In</h1>
+    <div class="alarm-setup">
+        <input type="time" id="time-in-input">
+        <select multiple id="days-in">
+            <option value="daily">Daily</option>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+        <button class="set-alarm" data-type="in">Set Alarm</button>
+    </div>
+    <div id="alarm-message-in" class="hidden">Alarm is ringing!</div>
+    <ul id="alarm-list-in" class="alarm-list"></ul>
+    <audio id="alarm-sound-in" src="time_in.mp3" preload="auto"></audio>
+</div>
+
+<div class="container">
+    <h1>Time Out</h1>
+    <div class="alarm-setup">
+        <input type="time" id="time-out-input">
+        <select multiple id="days-out">
+            <option value="daily">Daily</option>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+        <button class="set-alarm" data-type="out">Set Alarm</button>
+    </div>
+    <div id="alarm-message-out" class="hidden">Alarm is ringing!</div>
+    <ul id="alarm-list-out" class="alarm-list"></ul>
+    <audio id="alarm-sound-out" src="time_out.mp3" preload="auto"></audio>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js" defer></script>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.js" defer></script>
+<script>
+  $(document).ready(function() {
+    $('#example').DataTable();
+
+    $('#menu-btn').click(function() {
+       $('.side-bar').toggleClass('active');
+    });
+
+    $('#close-btn').click(function() {
+       $('.side-bar').removeClass('active');
+    });
+  });
+
+  const alarmsIn = [];
+  const alarmsOut = [];
+
+  <?php
+      echo "const schedules = " . json_encode($schedules) . ";";
+  ?>
+
+  function checkAlarms() {
+      const now = new Date();
+      schedules.forEach(schedule => {
+          const timeIn = new Date(now.toDateString() + ' ' + schedule.time_in + ':00');
+          const timeOut = new Date(now.toDateString() + ' ' + schedule.time_out + ':00');
+
+          if (now.getHours() === timeIn.getHours() && now.getMinutes() === timeIn.getMinutes() && now.getSeconds() === timeIn.getSeconds()) {
+              triggerAlarm(timeIn, 'in');
+          }
+
+          if (now.getHours() === timeOut.getHours() && now.getMinutes() === timeOut.getMinutes() && now.getSeconds() === timeOut.getSeconds()) {
+              triggerAlarm(timeOut, 'out');
+          }
+      });
+  }
+
+  function triggerAlarm(time, type) {
+      const messageElement = document.getElementById(`alarm-message-${type}`);
+      const soundElement = document.getElementById(`alarm-sound-${type}`);
+      messageElement.classList.remove('hidden');
+      soundElement.play();
+
+      setTimeout(() => {
+          messageElement.classList.add('hidden');
+          soundElement.pause();
+          soundElement.currentTime = 0;
+      }, 5000);
+  }
+
+  setInterval(checkAlarms, 1000);
+
+  document.querySelectorAll('.set-alarm').forEach(button => {
+      button.addEventListener('click', () => {
+          const type = button.getAttribute('data-type');
+          const timeInput = document.getElementById(`time-${type}-input`).value;
+          const daysInput = Array.from(document.getElementById(`days-${type}`).selectedOptions).map(option => option.value);
+          const alarmList = document.getElementById(`alarm-list-${type}`);
+
+          if (timeInput && daysInput.length > 0) {
+              const alarm = { time: timeInput, days: daysInput };
+              if (type === 'in') {
+                  alarmsIn.push(alarm);
+              } else {
+                  alarmsOut.push(alarm);
+              }
+
+              const li = document.createElement('li');
+              li.textContent = `Time: ${timeInput}, Days: ${daysInput.join(', ')}`;
+              const deleteButton = document.createElement('button');
+              deleteButton.textContent = 'Delete';
+              deleteButton.addEventListener('click', () => {
+                  li.remove();
+                  const alarmIndex = type === 'in' ? alarmsIn.indexOf(alarm) : alarmsOut.indexOf(alarm);
+                  if (type === 'in') {
+                      alarmsIn.splice(alarmIndex, 1);
+                  } else {
+                      alarmsOut.splice(alarmIndex, 1);
+                  }
+              });
+              li.appendChild(deleteButton);
+              alarmList.appendChild(li);
+          }
+      });
+  });
+</script>
+</body>
+</html>
